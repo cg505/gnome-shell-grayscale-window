@@ -7,22 +7,30 @@ import GObject from 'gi://GObject';
 import {Extension, gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
 
 
-const SHORTCUT = 'invert-window-shortcut';
+const SHORTCUT = 'grayscale-window-shortcut';
 
-export const InvertWindowEffect = GObject.registerClass(
-class InvertWindowEffect extends Clutter.ShaderEffect {
+export const GrayscaleWindowEffect = GObject.registerClass(
+class GrayscaleWindowEffect extends Clutter.ShaderEffect {
 	vfunc_get_static_shader_source() {
-		return ' \
-			uniform sampler2D tex; \
-			void main() { \
-				vec4 color = texture2D(tex, cogl_tex_coord_in[0].st); \
-				if(color.a > 0.0) { \
-					color.rgb /= color.a; \
-				} \
-				color.rgb = vec3(1.0, 1.0, 1.0) - color.rgb; \
-				color.rgb *= color.a; \
-				cogl_color_out = color * cogl_color_in; \
-			} \
+		return ' \n\
+			uniform sampler2D tex; \n\
+			void main() { \n\
+				vec4 color = texture2D(tex, cogl_tex_coord_in[0].st); \n\
+				// unapply pre-multiplied alpha \n\
+				if(color.a > 0.0) { \n\
+					color.rgb /= color.a; \n\
+				} \n\
+				// convert to linear gamma space (approx) \n\
+				color.rgb = pow(color.rgb, vec3(2.4)); \n\
+				// https://en.wikipedia.org/wiki/Grayscale#Converting_color_to_grayscale \n\
+				vec3 luminosityCoefs = vec3(.21, .71, .08); \n\
+				color.rgb = vec3(dot(color.rgb, luminosityCoefs)); \n\
+				// convert back to compressed gamma space (approx) \n\
+				color.rgb = pow(color.rgb, vec3(1.0 / 2.4)); \n\
+				// restore pre-multiplied alpha \n\
+				color.rgb *= color.a; \n\
+				cogl_color_out = color * cogl_color_in; \n\
+			} \n\
 		';
 	}
 
@@ -33,19 +41,19 @@ class InvertWindowEffect extends Clutter.ShaderEffect {
 });
 
 
-export default class InvertWindow extends Extension {
+export default class GrayscaleWindow extends Extension {
 	toggle_effect() {
 		global.get_window_actors().forEach(function(actor) {
 			let meta_window = actor.get_meta_window();
 			if(meta_window.has_focus()) {
-				if(actor.get_effect('invert-color')) {
-					actor.remove_effect_by_name('invert-color');
-					delete meta_window._invert_window_tag;
+				if(actor.get_effect('grayscale-color')) {
+					actor.remove_effect_by_name('grayscale-color');
+					delete meta_window._grayscale_window_tag;
 				}
 				else {
-					let effect = new InvertWindowEffect();
-					actor.add_effect_with_name('invert-color', effect);
-					meta_window._invert_window_tag = true;
+					let effect = new GrayscaleWindowEffect();
+					actor.add_effect_with_name('grayscale-color', effect);
+					meta_window._grayscale_window_tag = true;
 				}
 			}
 		}, this);
@@ -64,9 +72,9 @@ export default class InvertWindow extends Extension {
 
 		global.get_window_actors().forEach(function(actor) {
 			let meta_window = actor.get_meta_window();
-			if(meta_window.hasOwnProperty('_invert_window_tag')) {
-				let effect = new InvertWindowEffect();
-				actor.add_effect_with_name('invert-color', effect);
+			if(meta_window.hasOwnProperty('_grayscale_window_tag')) {
+				let effect = new GrayscaleWindowEffect();
+				actor.add_effect_with_name('grayscale-color', effect);
 			}
 		}, this);
 	}
@@ -75,11 +83,9 @@ export default class InvertWindow extends Extension {
 		Main.wm.removeKeybinding(SHORTCUT);
 
 		global.get_window_actors().forEach(function(actor) {
-			actor.remove_effect_by_name('invert-color');
+			actor.remove_effect_by_name('grayscale-color');
 		}, this);
 
 		this._settings = null;
 	}
 };
-
-

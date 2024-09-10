@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <schemalist gettext-domain="gnome-shell-extensions">
-	<schema path="/org/gnome/shell/extensions/invert-window/" id="org.gnome.shell.extensions.invert-window">
-		<key type="as" name="invert-window-shortcut">
-			<default><![CDATA[['<Super>I']]]></default>
+	<schema path="/org/gnome/shell/extensions/grayscale-window/" id="org.gnome.shell.extensions.grayscale-window">
+		<key type="as" name="grayscale-window-shortcut">
+			<default><![CDATA[['<Super>G']]]></default>
 		</key>
 	</schema>
 </schemalist>
-
