@@ -1,1 +1,1 @@
-This is a modified version of [maiself/gnome-shell-extension-invert-color](https://github.com/maiself/gnome-shell-extension-invert-color). Most of the code is copied from that project. The name and the shader code are changed. See the LICENSE file.
+This is a modified version of [maiself/gnome-shell-extension-invert-color](https://github.com/maiself/gnome-shell-extension-invert-color). Most of the code is copied from that project. The name and the shader code are changed, and the "global" shortcut has been added. See the LICENSE file.

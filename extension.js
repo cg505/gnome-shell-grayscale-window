@@ -8,7 +8,17 @@ import {Extension, gettext as _} from 'resource:///org/gnome/shell/extensions/ex
 
 
 const SHORTCUT = 'grayscale-window-shortcut';
+const GLOBAL_SHORTCUT = 'grayscale-global-shortcut';
 
+export const GrayscaleEffect = GObject.registerClass(
+class DesaturateEffect extends Clutter.DesaturateEffect {
+    constructor() {
+		super();
+        this.factor = 1.0;
+    }
+});
+
+// Deprecate this in favor of the desaturate one? Not sure which is "better"
 export const GrayscaleWindowEffect = GObject.registerClass(
 class GrayscaleWindowEffect extends Clutter.ShaderEffect {
 	vfunc_get_static_shader_source() {
@@ -51,12 +61,22 @@ export default class GrayscaleWindow extends Extension {
 					delete meta_window._grayscale_window_tag;
 				}
 				else {
-					let effect = new GrayscaleWindowEffect();
+					let effect = new GrayscaleEffect();
 					actor.add_effect_with_name('grayscale-color', effect);
 					meta_window._grayscale_window_tag = true;
 				}
 			}
 		}, this);
+	}
+
+	toggle_global_effect() {
+		if(Main.uiGroup.get_effect('grayscale-color')) {
+			Main.uiGroup.remove_effect_by_name('grayscale-color');
+		}
+		else {
+			let effect = new GrayscaleEffect();
+			Main.uiGroup.add_effect_with_name('grayscale-color', effect);
+		}
 	}
 
 	enable() {
@@ -70,10 +90,18 @@ export default class GrayscaleWindow extends Extension {
 			() => { this.toggle_effect(); }
 		);
 
+		Main.wm.addKeybinding(
+			GLOBAL_SHORTCUT,
+			this._settings,
+			Meta.KeyBindingFlags.NONE,
+			Shell.ActionMode.NORMAL,
+			() => { this.toggle_global_effect(); }
+		);
+
 		global.get_window_actors().forEach(function(actor) {
 			let meta_window = actor.get_meta_window();
 			if(meta_window.hasOwnProperty('_grayscale_window_tag')) {
-				let effect = new GrayscaleWindowEffect();
+				let effect = new GrayscaleEffect();
 				actor.add_effect_with_name('grayscale-color', effect);
 			}
 		}, this);
@@ -81,6 +109,7 @@ export default class GrayscaleWindow extends Extension {
 
 	disable() {
 		Main.wm.removeKeybinding(SHORTCUT);
+		Main.wm.removeKeybinding(GLOBAL_SHORTCUT);
 
 		global.get_window_actors().forEach(function(actor) {
 			actor.remove_effect_by_name('grayscale-color');

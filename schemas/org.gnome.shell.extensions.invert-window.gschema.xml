@@ -4,5 +4,8 @@
 		<key type="as" name="grayscale-window-shortcut">
 			<default><![CDATA[['<Super>G']]]></default>
 		</key>
+		<key type="as" name="grayscale-global-shortcut">
+			<default><![CDATA[['<Super><Shift>G']]]></default>
+		</key>
 	</schema>
 </schemalist>
