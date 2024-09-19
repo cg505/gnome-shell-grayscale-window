@@ -6,7 +6,6 @@ import GObject from 'gi://GObject';
 
 import {Extension, gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
 
-
 const SHORTCUT = 'grayscale-window-shortcut';
 const GLOBAL_SHORTCUT = 'grayscale-global-shortcut';
 
@@ -17,39 +16,6 @@ class DesaturateEffect extends Clutter.DesaturateEffect {
         this.factor = 1.0;
     }
 });
-
-// Deprecate this in favor of the desaturate one? Not sure which is "better"
-export const GrayscaleWindowEffect = GObject.registerClass(
-class GrayscaleWindowEffect extends Clutter.ShaderEffect {
-	vfunc_get_static_shader_source() {
-		return ' \n\
-			uniform sampler2D tex; \n\
-			void main() { \n\
-				vec4 color = texture2D(tex, cogl_tex_coord_in[0].st); \n\
-				// unapply pre-multiplied alpha \n\
-				if(color.a > 0.0) { \n\
-					color.rgb /= color.a; \n\
-				} \n\
-				// convert to linear gamma space (approx) \n\
-				color.rgb = pow(color.rgb, vec3(2.4)); \n\
-				// https://en.wikipedia.org/wiki/Grayscale#Converting_color_to_grayscale \n\
-				vec3 luminosityCoefs = vec3(.21, .71, .08); \n\
-				color.rgb = vec3(dot(color.rgb, luminosityCoefs)); \n\
-				// convert back to compressed gamma space (approx) \n\
-				color.rgb = pow(color.rgb, vec3(1.0 / 2.4)); \n\
-				// restore pre-multiplied alpha \n\
-				color.rgb *= color.a; \n\
-				cogl_color_out = color * cogl_color_in; \n\
-			} \n\
-		';
-	}
-
-	vfunc_paint_target(...args) {
-		this.set_uniform_value("tex", 0);
-		super.vfunc_paint_target(...args);
-	}
-});
-
 
 export default class GrayscaleWindow extends Extension {
 	toggle_effect() {
