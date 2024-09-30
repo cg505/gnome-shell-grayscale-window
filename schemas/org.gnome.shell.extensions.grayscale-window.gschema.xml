@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<schemalist gettext-domain="gnome-shell-extensions">
+<schemalist>
 	<schema path="/org/gnome/shell/extensions/grayscale-window/" id="org.gnome.shell.extensions.grayscale-window">
 		<key type="as" name="grayscale-window-shortcut">
 			<default><![CDATA[['<Super>G']]]></default>

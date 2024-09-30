@@ -1,5 +1,7 @@
 #!/usr/bin/env fish
 
+glib-compile-schemas schemas
+
 set -l file "grayscale-window@cg505.com.zip"
 
 rm $file

@@ -1,7 +1,7 @@
 {
 	"uuid": "grayscale-window@cg505.com",
 	"name": "Grayscale Windows",
-	"description": "Make individual windows grayscale\nDefault shortcut is Super+G for a window and Super+Shift+G for everything",
+	"description": "Make individual windows grayscale\nDefault shortcut is Super+G for a window and Super+Shift+G for everything\nCode is forked from the \"Invert Window Color\" extension.",
 	"url": "https://github.com/cg505/gnome-shell-grayscale-window",
 	"shell-version": [
 		"46",
