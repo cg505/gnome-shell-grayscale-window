@@ -5,8 +5,9 @@
 	"url": "https://github.com/cg505/gnome-shell-grayscale-window",
 	"shell-version": [
 		"46",
-		"47"
+		"47",
+		"48"
 	],
 	"settings-schema": "org.gnome.shell.extensions.grayscale-window",
-	"version": 2
+	"version": 3
 }
