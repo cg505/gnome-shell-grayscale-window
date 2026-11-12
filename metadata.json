@@ -8,8 +8,9 @@
 		"47",
 		"48",
 		"49",
-		"50"
+		"50",
+		"51"
 	],
 	"settings-schema": "org.gnome.shell.extensions.grayscale-window",
-	"version": 5
+	"version": 6
 }
